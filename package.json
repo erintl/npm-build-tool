@@ -4,7 +4,9 @@
   "description": "A demo application using npm as a build tool.",
   "main": "index.js",
   "scripts": {
-    "test": "mocha -u bdd -R spec",
+    "test": "mocha -R spec",
+    "pretest": "echo \"before tests.\"",
+    "posttest": "echo \"after tests.\"",
     "start": "node index.js",
     "stop": "echo \"Running stop script\"",
     "start:dev": "node index.js 4000"
