@@ -4,12 +4,31 @@
   "description": "A demo application using npm as a build tool.",
   "main": "index.js",
   "scripts": {
-    "test": "mocha -R spec",
-    "pretest": "echo \"before tests.\"",
-    "posttest": "echo \"after tests.\"",
+    "test": "mocha --reporter progress index.js \"test/*.spec.js\"",
+    "test:watch": "npm run test -- --watch",
     "start": "node index.js",
     "stop": "echo \"Running stop script\"",
-    "start:dev": "node index.js 4000"
+    "start:dev": "node index.js 4000",
+    "lint": "esw *.js ./src/**/*.js --color",
+    "lint:watch": "npm run lint -- --watch",
+    "compile:coffee": "coffee --compile --output ./lib ./src/coffeeScript",
+    "compile:ts": "tsc --outDir ./lib --module commonjs ./src/typeScript/*.ts",
+    "clean-lib": "rimraf ./lib && mkdir lib",
+    "clean-public": "rimraf ./public && mkdir -p public/js",
+    "precompile": "npm-run-all --sequential clean-lib lint",
+    "compile": "npm-run-all --sequential compile:coffee compile:ts",
+    "postcompile": "npm run test",
+    "build:less": "lessc client/less/demo.less public/css/site.css",
+    "build:bundle": "browserify ./client/js/app.js -o | uglifyjs -mc > ./public/js/bundle.min.js",
+    "bundle:watch": "watchify ./client/js/app.js -o ./public/js/bundle.js -dv",
+    "prebuild": "npm run clean-public",
+    "build": "npm-run-all --sequential build:less build:bundle",
+    "server:watch": "nodemon --ignore client --ignore public index.js",
+    "compile:coffee:watch": "coffee --compile -w --output ./lib ./src/coffeeScript",
+    "compile:ts:watch": "npm run compile:ts -- -w",
+    "browser:watch": "live-reload --port 9091 public/",
+    "watch": "npm-run-all --parallel test:watch bundle:watch server:watch browser:watch"
+
   },
   "repository": {
     "type": "git",
@@ -26,9 +45,22 @@
   },
   "homepage": "https://github.com/erintl/npm-build-tool#readme",
   "devDependencies": {
+    "browserify": "^14.5.0",
+    "coffee-script": "^1.12.7",
+    "eslint": "^4.12.1",
+    "eslint-plugin-import": "^2.8.0",
+    "eslint-watch": "^3.1.3",
+    "less": "^2.7.3",
+    "live-reload": "^1.1.0",
     "mocha": "^4.0.1",
+    "nodemon": "^1.12.1",
+    "npm-run-all": "^4.1.2",
+    "rimraf": "^2.6.2",
     "should": "^13.1.3",
-    "supertest": "^3.0.0"
+    "supertest": "^3.0.0",
+    "typescript": "^2.6.2",
+    "uglify-js": "^3.2.0",
+    "watchify": "^3.9.0"
   },
   "dependencies": {
     "koa": "^2.4.1"
