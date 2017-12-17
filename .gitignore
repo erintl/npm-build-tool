@@ -60,3 +60,6 @@ typings/
 # build
 lib/
 public/
+
+# IDE
+.idea/
